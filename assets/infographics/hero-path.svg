@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 280" role="img" aria-labelledby="title desc">
+<title id="title">Путь к рабочему AI-продукту</title><desc id="desc">Python, LLM, RAG, агенты, API и деплой соединены в один процесс</desc>
+<defs>
+  <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7c3aed"/><stop offset="0.55" stop-color="#4f46e5"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+  <radialGradient id="glow"><stop stop-color="#8b5cf6" stop-opacity=".65"/><stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/></radialGradient>
+  <filter id="blur"><feGaussianBlur stdDeviation="12"/></filter>
+  <filter id="shadow"><feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#020617" flood-opacity=".6"/></filter>
+</defs>
+<rect width="1000" height="280" rx="34" fill="#080d1b"/>
+<circle cx="830" cy="40" r="210" fill="url(#glow)" opacity=".35" filter="url(#blur)"/>
+<text x="34" y="39" fill="#a78bfa" font-size="15" font-family="system-ui" font-weight="800">ПУТЬ К РАБОЧЕМУ AI-ПРОДУКТУ</text>
+<text x="34" y="76" fill="#f8fafc" font-size="28" font-family="system-ui" font-weight="800">Учись через связанный процесс</text>
+<text x="34" y="104" fill="#94a3b8" font-size="15" font-family="system-ui">Каждый этап превращается в часть итогового приложения</text>
+<path d="M80 184 C220 112 332 232 480 165 S755 118 920 184" fill="none" stroke="#24324d" stroke-width="10" stroke-linecap="round"/>
+<path d="M80 184 C220 112 332 232 480 165 S755 118 920 184" fill="none" stroke="url(#g)" stroke-width="4" stroke-linecap="round" stroke-dasharray="9 13"/>
+<g font-family="system-ui" text-anchor="middle">
+  <g transform="translate(80 202)"><circle r="34" fill="#111a2e" stroke="url(#g)" stroke-width="3" filter="url(#shadow)"/><text y="7" fill="#f8fafc" font-size="18" font-weight="800">PY</text><text y="60" fill="#94a3b8" font-size="15">Python</text></g>
+  <g transform="translate(244 159)"><circle r="34" fill="#111a2e" stroke="url(#g)" stroke-width="3" filter="url(#shadow)"/><text y="7" fill="#f8fafc" font-size="17" font-weight="800">LLM</text><text y="60" fill="#94a3b8" font-size="15">Модель</text></g>
+  <g transform="translate(405 200)"><circle r="34" fill="#111a2e" stroke="url(#g)" stroke-width="3" filter="url(#shadow)"/><text y="7" fill="#f8fafc" font-size="17" font-weight="800">RAG</text><text y="60" fill="#94a3b8" font-size="15">Знания</text></g>
+  <g transform="translate(574 145)"><circle r="34" fill="#111a2e" stroke="url(#g)" stroke-width="3" filter="url(#shadow)"/><text y="7" fill="#f8fafc" font-size="17" font-weight="800">AG</text><text y="60" fill="#94a3b8" font-size="15">Агенты</text></g>
+  <g transform="translate(742 176)"><circle r="34" fill="#111a2e" stroke="url(#g)" stroke-width="3" filter="url(#shadow)"/><text y="7" fill="#f8fafc" font-size="17" font-weight="800">API</text><text y="60" fill="#94a3b8" font-size="15">Backend</text></g>
+  <g transform="translate(920 202)"><circle r="34" fill="#111a2e" stroke="url(#g)" stroke-width="3" filter="url(#shadow)"/><text y="7" fill="#f8fafc" font-size="22" font-weight="800">☁</text><text y="60" fill="#94a3b8" font-size="15">Deploy</text></g>
+</g>
+</svg>
