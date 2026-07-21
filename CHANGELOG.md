@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.2.0 — Full lessons
+
+- Replaced shallow topic cards with 55 complete lessons.
+- Added five-part lesson player: Learn, Example, Practice, Check, Cheat Sheet.
+- Added lesson-specific examples, exercises, quizzes, mistakes and source references.
+- Added persistent drafts, per-lesson progress and lesson quiz scores.
+- Added structural practice validation and migration-safe lesson state.
+- Updated service worker cache and offline assets.
+
 ## 2.1.0 — Learning loop and ethical gamification
 
 - Separate meaningful daily streak from the larger daily XP goal.
