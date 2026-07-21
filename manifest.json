@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "AI Forge Path v2.1 — AI Engineering Learning OS",
+  "name": "AI Forge Path v2.2 — AI Engineering Learning OS",
   "short_name": "AI Forge Path",
-  "description": "PWA для обучения AI Engineering: адаптивная практика, серия, квесты, XP, интервальные повторения, карта навыков, проекты и локальная история прогресса.",
+  "description": "Полноценная PWA для обучения AI Engineering: 55 уроков с объяснениями, примерами, практикой, проверкой, прогрессом и проектами.",
   "lang": "ru",
   "start_url": "./",
   "scope": "./",
