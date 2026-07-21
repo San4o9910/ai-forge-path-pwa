@@ -1,6 +1,6 @@
-const CACHE = 'ai-forge-path-v2-2026-07-21';
+const CACHE = 'ai-forge-path-v2-1-2026-07-21';
 const CORE_ASSETS = [
-  './', './index.html', './styles.css', './data.js', './core.js', './render.js', './dialogs.js', './manifest.json',
+  './', './index.html', './styles.css', './data.js', './core.js', './engagement.js', './render.js', './dialogs.js', './manifest.json',
   './icons/icon-192.png', './icons/icon-512.png',
   './assets/infographics/hero-path.svg', './assets/infographics/focus-target.svg',
   './assets/infographics/timer-hourglass.svg', './assets/infographics/python.svg',
