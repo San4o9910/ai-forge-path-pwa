@@ -1,6 +1,6 @@
-const CACHE = 'ai-forge-path-v2-1-2026-07-21';
+const CACHE = 'ai-forge-path-v2-2-2026-07-21';
 const CORE_ASSETS = [
-  './', './index.html', './styles.css', './data.js', './core.js', './engagement.js', './render.js', './dialogs.js', './manifest.json',
+  './', './index.html', './styles.css', './data.js', './lesson-sources.js', './lessons/python.js', './lessons/libraries.js', './lessons/fundamentals.js', './lessons/prompting.js', './lessons/llm.js', './lessons/rag.js', './lessons/agents.js', './lessons/frameworks.js', './lessons/backend.js', './lessons/deployment.js', './lessons/portfolio.js', './core.js', './engagement.js', './render.js', './dialogs.js', './lesson-player.js', './manifest.json',
   './icons/icon-192.png', './icons/icon-512.png',
   './assets/infographics/hero-path.svg', './assets/infographics/focus-target.svg',
   './assets/infographics/timer-hourglass.svg', './assets/infographics/python.svg',
