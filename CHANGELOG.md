@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.1.0 — Learning loop and ethical gamification
+
+- Separate meaningful daily streak from the larger daily XP goal.
+- Add up to two automatic streak freezes and an in-app Spark currency.
+- Add three adaptive daily quests, a daily reward chest, and a weekly mission.
+- Add quality-weighted XP and personal weekly league progression without a fake social leaderboard.
+- Add Practice Hub: mistake bank, due spaced reviews, weakest-skill practice, and a two-minute rescue session.
+- Add spaced-review intervals: 1, 3, 7, 14, 30, and 60 days.
+- Add achievements, reward celebrations, comeback recognition, and anti-grinding limits.
+- Preserve all v2 progress through the existing IndexedDB/localStorage migration path.
+
 ## 2.0.0 — 2026-07-21
 
 - Полностью переработан главный экран.
