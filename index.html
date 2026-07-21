@@ -10,14 +10,14 @@
   <link rel="icon" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <link rel="stylesheet" href="styles.css" />
-  <title>AI Forge Path v2</title>
+  <title>AI Forge Path v2.1</title>
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
       <button class="brand" type="button" data-view-target="today" aria-label="На главную">
         <span class="brand-mark">✦</span>
-        <span><strong>AI Forge Path</strong><small>трекер компетенций v2</small></span>
+        <span><strong>AI Forge Path</strong><small>трекер компетенций v2.1</small></span>
       </button>
       <div class="top-actions">
         <button id="storageStatusBtn" class="save-status" type="button" title="Где хранится прогресс">
@@ -38,6 +38,29 @@
           </div>
           <button id="runAssessmentBtn" class="btn btn-secondary" type="button">Пройти стартовую оценку</button>
         </div>
+
+        <section class="habit-dashboard" aria-label="Ежедневная мотивация и прогресс">
+          <article class="habit-card streak-card">
+            <span class="habit-icon">🔥</span>
+            <div><small>Серия</small><strong><span id="streakValue">0</span> дней</strong><span id="streakTodayText">Сделай один шаг сегодня</span></div>
+            <div class="freeze-stack" title="Заморозки защищают серию"><span>❄</span><b id="freezeValue">1/2</b></div>
+          </article>
+          <article class="habit-card goal-card">
+            <span class="habit-icon">🎯</span>
+            <div class="habit-grow"><small>Цель на сегодня</small><strong id="dailyGoalLabel">0 / 40 XP</strong><div class="mini-progress"><span id="dailyGoalBar"></span></div></div>
+            <b id="dailyGoalPercent">0%</b>
+          </article>
+          <article class="habit-card xp-card">
+            <span class="habit-icon">✨</span>
+            <div class="habit-grow"><small>Опыт</small><strong><span id="xpTotalValue">0</span> XP</strong><span id="leagueLabel">Лига «Уголь»</span></div>
+            <span id="weeklyXpValue" class="habit-side">0 XP<br><small>за неделю</small></span>
+          </article>
+          <article class="habit-card currency-card">
+            <span class="habit-icon">⚡</span>
+            <div class="habit-grow"><small>Искры</small><strong id="sparksValue">10</strong><span>награды и защита серии</span></div>
+            <button id="buyFreezeBtn" class="mini-action" type="button">+ ❄</button>
+          </article>
+        </section>
 
         <section class="overview-grid">
           <article class="card level-card">
@@ -93,6 +116,28 @@
           </div>
         </section>
 
+        <section class="two-column engagement-panels">
+          <article class="card quests-card">
+            <div class="section-head">
+              <div><p class="eyebrow">ЕЖЕДНЕВНЫЕ КВЕСТЫ</p><h2>Три полезных действия</h2></div>
+              <span id="questCounter" class="status-badge status-learning">0/3</span>
+            </div>
+            <p class="section-note">Награды выдаются за обучение, практику и повторение — не за пустые клики.</p>
+            <div id="dailyQuestList" class="quest-list"></div>
+            <button id="dailyChestBtn" class="reward-chest" type="button" disabled><span>🎁</span><span><b>Ежедневный сундук</b><small>Сначала забери награды за 3 квеста</small></span><span>→</span></button>
+          </article>
+
+          <article class="card practice-hub-card">
+            <div class="section-head"><div><p class="eyebrow">ПЕРСОНАЛЬНАЯ ПРАКТИКА</p><h2>Что лучше повторить сейчас</h2></div><span class="adaptive-chip">адаптивно</span></div>
+            <div class="practice-options">
+              <button class="practice-option" type="button" data-practice-mode="mistakes"><span class="practice-symbol red">!</span><span><b>Разобрать ошибки</b><small><span id="mistakeCount">0</span> нерешённых</small></span><i>→</i></button>
+              <button class="practice-option" type="button" data-practice-mode="reviews"><span class="practice-symbol yellow">↺</span><span><b>Интервальное повторение</b><small><span id="reviewDueCount">0</span> тем подошло</small></span><i>→</i></button>
+              <button class="practice-option" type="button" data-practice-mode="weakest"><span class="practice-symbol violet">◈</span><span><b>Слабый навык</b><small id="weakestSkillName">Определяем…</small></span><i>→</i></button>
+              <button class="practice-option rescue" type="button" data-practice-mode="rescue"><span class="practice-symbol green">2</span><span><b>Быстрый шаг</b><small>2 минуты, чтобы сохранить ритм</small></span><i>→</i></button>
+            </div>
+          </article>
+        </section>
+
         <section class="two-column">
           <article class="card today-plan-card">
             <div class="section-head">
@@ -112,12 +157,29 @@
           </article>
         </section>
 
+        <section class="card weekly-card">
+          <div class="weekly-main">
+            <div class="league-emblem" id="leagueEmblem">●</div>
+            <div><p class="eyebrow">НЕДЕЛЬНАЯ МИССИЯ</p><h2 id="weeklyMissionTitle">4 активных дня + 200 XP</h2><p id="weeklyMissionText">Возвращайся регулярно и двигайся вперёд разными способами.</p></div>
+          </div>
+          <div class="weekly-progress-wrap">
+            <div class="weekly-stats"><span><b id="weeklyDaysProgress">0/4</b><small>активных дня</small></span><span><b id="weeklyXpProgress">0/200</b><small>XP</small></span><span><b id="leagueProgressLabel">0%</b><small>до новой лиги</small></span></div>
+            <div class="progress-track large"><span id="weeklyMissionBar"></span></div>
+            <div class="monthly-challenge"><span><b>Месячный челлендж</b><small id="monthlyChallengeLabel">0/24 квестов</small></span><div class="mini-progress"><span id="monthlyChallengeBar"></span></div></div>
+            <div class="weekly-actions"><button id="shareProgressBtn" class="btn btn-quiet" type="button">Поделиться прогрессом</button><button id="monthlyRewardBtn" class="btn btn-secondary" type="button" disabled>Награда месяца</button><button id="weeklyRewardBtn" class="btn btn-secondary" type="button" disabled>Награда недели</button></div>
+          </div>
+        </section>
+
         <section class="card skill-snapshot-card">
           <div class="section-head">
             <div><p class="eyebrow">КАРТА НАВЫКОВ</p><h2>Сильные и слабые стороны</h2></div>
             <button class="text-btn" type="button" data-view-target="skills">Подробная оценка →</button>
           </div>
           <div id="skillSnapshot" class="skill-snapshot"></div>
+        </section>
+        <section class="card achievement-card">
+          <div class="section-head"><div><p class="eyebrow">ДОСТИЖЕНИЯ</p><h2>Вехи, которые подтверждают привычку</h2></div><span id="achievementCounter" class="muted">0/12</span></div>
+          <div id="achievementShelf" class="achievement-shelf"></div>
         </section>
       </section>
 
@@ -195,11 +257,13 @@
   <dialog id="assessmentDialog" class="modal assessment-modal"><div class="modal-content"></div></dialog>
   <dialog id="projectDialog" class="modal project-modal"><div class="modal-content"></div></dialog>
   <dialog id="settingsDialog" class="modal settings-modal"><div class="modal-content"></div></dialog>
+  <dialog id="practiceDialog" class="modal practice-modal"><div class="modal-content"></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <input id="importInput" type="file" accept="application/json" hidden />
 
   <script src="data.js"></script>
   <script src="core.js"></script>
+  <script src="engagement.js"></script>
   <script src="render.js"></script>
   <script src="dialogs.js"></script>
 </body>

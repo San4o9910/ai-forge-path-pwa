@@ -102,9 +102,11 @@ function openQuizDialog(stageId, topicId = null) {
     button.classList.remove('btn-secondary');
     button.classList.add(correct ? 'btn-primary' : 'btn-danger');
     const score = correct ? 100 : 40;
-    state.stageQuiz[stageId] = { score, completedAt: nowISO(), answerIndex };
-    addHistory('assessment', `Проверка знаний: ${getStage(stageId).title}`, `${correct ? 'Верный ответ.' : 'Ответ требует повторения.'} ${quizItem.explanation}`, { stageId, topicId, score });
-    $('#quizFeedback', dialog).innerHTML = `<article class="topic-section" style="margin-top:14px"><h3>${correct ? 'Верно' : 'Нужно повторить'}</h3><p>${escapeHtml(quizItem.explanation)}</p>${topicId && correct ? '<button id="masterAfterQuizBtn" class="btn btn-primary" type="button" style="margin-top:12px">Отметить тему как освоенную</button>' : ''}</article>`;
+    const previousQuiz = state.stageQuiz[stageId];
+    state.stageQuiz[stageId] = { score: Math.max(Number(previousQuiz?.score || 0), score), latestScore: score, completedAt: nowISO(), answerIndex, attempts: Number(previousQuiz?.attempts || 0) + 1 };
+    if (correct) resolveMistakesForStage(stageId); else addMistake(stageId, quizItem, answerIndex, topicId);
+    addHistory('assessment', `Проверка знаний: ${getStage(stageId).title}`, `${correct ? 'Верный ответ.' : 'Ответ добавлен в банк ошибок.'} ${quizItem.explanation}`, { stageId, topicId, score, repeatAttempt: Boolean(previousQuiz) });
+    $('#quizFeedback', dialog).innerHTML = `<article class="topic-section ${correct ? '' : 'mistake-feedback'}" style="margin-top:14px"><h3>${correct ? 'Верно · ошибка закрыта' : 'Нужно повторить · сохранено в банк ошибок'}</h3><p>${escapeHtml(quizItem.explanation)}</p><small class="reward-preview">${correct ? '+20 XP за проверку' : '+8 XP за честную попытку'}</small>${topicId && correct ? '<button id="masterAfterQuizBtn" class="btn btn-primary" type="button" style="margin-top:12px">Отметить тему как освоенную</button>' : ''}</article>`;
     $('#masterAfterQuizBtn', dialog)?.addEventListener('click', () => {
       setTopicStatus(topicId, 'mastered');
       persistState({ silent: true });
@@ -140,7 +142,7 @@ function openAssessmentDialog() {
   $('#saveAssessmentBtn', dialog).addEventListener('click', () => {
     state.assessment.ratings = draft;
     state.assessment.completedAt = nowISO();
-    addHistory('assessment', 'Пройдена стартовая оценка навыков', `Текущий расчётный уровень: ${getLevel(overallScore()).name}, ${overallScore()}/100.`, { score: overallScore() });
+    addHistory('assessment', 'Пройдена стартовая оценка навыков', `Текущий расчётный уровень: ${getLevel(overallScore()).name}, ${overallScore()}/100.`, { score: overallScore(), learningEvent: false });
     queueSave();
     dialog.close();
     renderAll();
@@ -170,16 +172,19 @@ function openProjectDialog(id) {
   }));
   $('#saveProjectBtn', dialog).addEventListener('click', () => {
     const previous = data.status;
+    const criteriaBefore = Object.values(data.criteria).filter(Boolean).length;
     data.status = selectedStatus;
     data.evidenceUrl = $('#projectEvidenceInput', dialog).value.trim();
     data.notes = $('#projectNotesInput', dialog).value.trim();
     $$('[data-project-criterion]', dialog).forEach(input => { data.criteria[input.dataset.projectCriterion] = input.checked; });
+    const criteriaAfter = Object.values(data.criteria).filter(Boolean).length;
+    const criteriaAdded = Math.max(0, criteriaAfter - criteriaBefore);
     data.updatedAt = nowISO();
     if (selectedStatus !== 'not_started' && !data.startedAt) data.startedAt = nowISO();
     if (selectedStatus === 'complete') data.completedAt = data.completedAt || nowISO();
     if (selectedStatus !== 'complete') data.completedAt = null;
-    if (previous !== selectedStatus) addHistory('project', `${projectStatusLabel(selectedStatus)}: ${projectItem.title}`, `Статус проекта изменён с «${projectStatusLabel(previous)}» на «${projectStatusLabel(selectedStatus)}».`, { projectId: id, fromStatus: previous, toStatus: selectedStatus });
-    else addHistory('project', `Обновлён проект «${projectItem.title}»`, 'Сохранены критерии, ссылка или заметки проекта.', { projectId: id });
+    if (previous !== selectedStatus) addHistory('project', `${projectStatusLabel(selectedStatus)}: ${projectItem.title}`, `Статус проекта изменён с «${projectStatusLabel(previous)}» на «${projectStatusLabel(selectedStatus)}».`, { projectId: id, fromStatus: previous, toStatus: selectedStatus, criteriaAdded });
+    else addHistory('project', `Обновлён проект «${projectItem.title}»`, 'Сохранены критерии, ссылка или заметки проекта.', { projectId: id, criteriaAdded });
     queueSave();
     dialog.close();
     renderAll();
@@ -199,6 +204,8 @@ async function openSettingsDialog() {
         <div class="field"><label for="weeklyHoursInput">Часов в неделю</label><input id="weeklyHoursInput" type="number" min="1" max="40" value="${state.profile.weeklyHours}"></div>
         <div class="field"><label for="sessionLengthInput">Длина учебной сессии</label><select id="sessionLengthInput"><option value="25">25 минут</option><option value="45">45 минут</option><option value="60">60 минут</option><option value="90">90 минут</option></select></div>
         <div class="field"><label for="modeInput">Порядок обучения</label><select id="modeInput"><option value="project">Быстрее к проектам</option><option value="sequential">Строго по порядку</option></select></div>
+        <div class="field"><label for="dailyGoalXpInput">Ежедневная цель XP</label><input id="dailyGoalXpInput" type="number" min="10" max="200" step="5" value="${state.engagement.dailyGoalXp}"></div>
+        <div class="field"><label for="dailyGoalMinutesInput">Альтернативная цель, минут</label><input id="dailyGoalMinutesInput" type="number" min="2" max="120" step="1" value="${state.engagement.dailyGoalMinutes}"></div>
         <button id="saveSettingsBtn" class="btn btn-primary full" type="button">Сохранить настройки</button>
       </section>
       <section class="settings-panel">
@@ -219,6 +226,12 @@ async function openSettingsDialog() {
         <button id="importBtn" class="btn btn-secondary full" type="button">Восстановить из JSON</button>
       </section>
       <section class="settings-panel">
+        <h3>Награды и серия</h3>
+        <div class="storage-details"><div><span>Всего XP</span><b>${state.engagement.xpTotal}</b></div><div><span>Искры</span><b>${state.engagement.sparks}</b></div><div><span>Заморозки серии</span><b>${state.engagement.streakFreezes}/${state.engagement.maxStreakFreezes}</b></div></div>
+        <button id="settingsBuyFreezeBtn" class="btn btn-secondary full" type="button" ${state.engagement.streakFreezes >= state.engagement.maxStreakFreezes || state.engagement.sparks < 40 ? 'disabled' : ''}>Купить заморозку · 40 искр</button>
+        <p class="muted">Серия засчитывается за одно осмысленное действие. Дневная цель считается отдельно и может быть выше.</p>
+      </section>
+      <section class="settings-panel">
         <h3>Опасная зона</h3>
         <p class="muted">Сброс удалит историю, статусы, оценки и проекты только на этом устройстве.</p>
         <button id="resetDataBtn" class="btn btn-danger full" type="button">Сбросить весь прогресс</button>
@@ -230,6 +243,8 @@ async function openSettingsDialog() {
     state.profile.weeklyHours = Math.max(1, Math.min(40, Number($('#weeklyHoursInput', dialog).value || 10)));
     state.profile.sessionLength = Number($('#sessionLengthInput', dialog).value || 45);
     state.profile.mode = $('#modeInput', dialog).value;
+    state.engagement.dailyGoalXp = Math.max(10, Math.min(200, Number($('#dailyGoalXpInput', dialog).value || 40)));
+    state.engagement.dailyGoalMinutes = Math.max(2, Math.min(120, Number($('#dailyGoalMinutesInput', dialog).value || 15)));
     queueSave();
     dialog.close();
     renderAll();
@@ -238,6 +253,7 @@ async function openSettingsDialog() {
   $('#manualBackupBtn', dialog).addEventListener('click', createManualBackup);
   $('#exportBtn', dialog).addEventListener('click', exportData);
   $('#importBtn', dialog).addEventListener('click', () => $('#importInput').click());
+  $('#settingsBuyFreezeBtn', dialog)?.addEventListener('click', () => { buyStreakFreeze(); dialog.close(); });
   $('#resetDataBtn', dialog).addEventListener('click', resetData);
   dialog.showModal();
 }
@@ -325,15 +341,7 @@ function handleTaskAction(action, topicId) {
 }
 
 function calcStreak() {
-  const dates = new Set(state.activityDates);
-  let streak = 0;
-  const cursor = new Date();
-  if (!dates.has(dateKey(cursor))) cursor.setDate(cursor.getDate() - 1);
-  while (dates.has(dateKey(cursor))) {
-    streak += 1;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  return streak;
+  return calculateStreakDetails().current;
 }
 
 function estimateWeeks() {
@@ -421,6 +429,12 @@ function bindEvents() {
     const taskButton = event.target.closest('[data-task-action]');
     if (taskButton) handleTaskAction(taskButton.dataset.taskAction, taskButton.dataset.topicId);
 
+    const questButton = event.target.closest('[data-claim-quest]');
+    if (questButton) claimQuest(questButton.dataset.claimQuest);
+
+    const practiceButton = event.target.closest('[data-practice-mode]');
+    if (practiceButton) openPracticeHub(practiceButton.dataset.practiceMode);
+
     const closeButton = event.target.closest('[data-close-dialog]');
     if (closeButton) closeButton.closest('dialog').close();
   });
@@ -447,6 +461,11 @@ function bindEvents() {
     toast('План обновлён');
   });
   $('#exportHistoryBtn').addEventListener('click', exportData);
+  $('#dailyChestBtn').addEventListener('click', claimDailyChest);
+  $('#weeklyRewardBtn').addEventListener('click', claimWeeklyChallenge);
+  $('#monthlyRewardBtn').addEventListener('click', claimMonthlyChallenge);
+  $('#shareProgressBtn').addEventListener('click', shareProgress);
+  $('#buyFreezeBtn').addEventListener('click', buyStreakFreeze);
   $('#importInput').addEventListener('change', event => importData(event.target.files?.[0]));
 
   window.addEventListener('beforeinstallprompt', event => {

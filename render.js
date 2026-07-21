@@ -5,6 +5,7 @@ function renderAll() {
   renderSkills();
   renderHistory();
   renderProjects();
+  renderEngagementDashboard();
 }
 
 function renderNavigation() {
@@ -320,14 +321,14 @@ function renderHistory() {
     <div class="timeline-date">${formatDayLabel(key)}</div>
     ${dayEvents.map(event => `<article class="timeline-item">
       <span class="timeline-item-icon">${historyIcon(event.type)}</span>
-      <div><h3>${escapeHtml(event.title)}</h3><p>${escapeHtml(event.detail || '')}${event.minutes ? ` · ${event.minutes} мин` : ''}${event.score !== undefined ? ` · ${event.score}%` : ''}</p></div>
+      <div><h3>${escapeHtml(event.title)}</h3><p>${escapeHtml(event.detail || '')}${event.minutes ? ` · ${event.minutes} мин` : ''}${event.score !== undefined ? ` · ${event.score}%` : ''}${event.xp ? ` · +${event.xp} XP` : ''}</p></div>
       <time datetime="${event.timestamp}">${formatTime(event.timestamp)}</time>
     </article>`).join('')}
   </section>`).join('');
 }
 
 function historyIcon(type) {
-  return ({ topic: '◉', practice: '⌁', assessment: '✓', project: '▣', backup: '▤' })[type] || '•';
+  return ({ topic: '◉', practice: '⌁', assessment: '✓', project: '▣', backup: '▤', reward: '✦', achievement: '🏅' })[type] || '•';
 }
 
 function renderProjects() {

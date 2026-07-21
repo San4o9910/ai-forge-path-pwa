@@ -39,7 +39,7 @@ const PROJECT_STAGE_MAP = {
 };
 
 const PROJECT_FIRST = ['python-basics','python-functions','python-files','zero-shot','llm-intro','tokens','embeddings','rag-pipeline','agent-architecture','tools','fastapi','rest','docker','git'];
-const APP_VERSION = '2.0.0';
+const APP_VERSION = '2.1.0';
 const DB_NAME = 'ai-forge-path-v2';
 const DB_VERSION = 1;
 const STATE_KEY = 'current-state';
@@ -138,6 +138,7 @@ function createDefaultState() {
     history: [],
     activityDates: [],
     dailyPlanNonce: {},
+    engagement: engagementDefaultState(),
     legacyMinutes: 0,
     meta: {
       createdAt: nowISO(),
@@ -163,6 +164,7 @@ function normalizeState(input) {
   result.stageQuiz = result.stageQuiz && typeof result.stageQuiz === 'object' ? result.stageQuiz : {};
   result.assessment = result.assessment && typeof result.assessment === 'object' ? result.assessment : { ratings: {}, completedAt: null };
   result.assessment.ratings = result.assessment.ratings && typeof result.assessment.ratings === 'object' ? result.assessment.ratings : {};
+  result.engagement = deepMerge(engagementDefaultState(), result.engagement && typeof result.engagement === 'object' ? result.engagement : {});
   result.meta = result.meta && typeof result.meta === 'object' ? result.meta : base.meta;
   return result;
 }
@@ -326,6 +328,10 @@ async function loadState() {
   }
 
   state = normalizeState(loaded || createDefaultState());
+  ensureEngagementState();
+  seedEngagementFromProgress();
+  checkComeback();
+  applyStreakProtection();
   activeView = state.meta.lastView || 'today';
   await persistState({ immediate: true, silent: true });
   await ensureDailyBackup();
@@ -404,10 +410,9 @@ function addHistory(type, title, detail, extra = {}) {
     timestamp: nowISO(),
     ...extra
   };
+  applyEngagementToEvent(event);
   state.history.unshift(event);
   if (state.history.length > 1500) state.history.length = 1500;
-  const today = dateKey();
-  if (!state.activityDates.includes(today)) state.activityDates.push(today);
   queueSave();
   return event;
 }
@@ -483,11 +488,7 @@ function getCurrentTopic() {
 }
 
 function reviewIsDue(item) {
-  const data = topicState(item.id);
-  if (data.status !== 'mastered' || !data.masteredAt) return false;
-  const last = new Date(data.lastReviewedAt || data.masteredAt).getTime();
-  const intervalDays = Math.min(30, 7 * Math.max(1, data.reviewCount + 1));
-  return Date.now() - last > intervalDays * 86400000;
+  return reviewDueWithIntervals(item);
 }
 
 function nextActionFor(item) {
@@ -537,7 +538,7 @@ function markPracticeDone(id, done = true) {
   data.practiceCompletedAt = done ? nowISO() : null;
   data.updatedAt = nowISO();
   if (done && STATUS[data.status].order < STATUS.review.order) data.status = 'review';
-  addHistory('practice', done ? `Выполнена практика «${item.title}»` : `Практика «${item.title}» возвращена в работу`, done ? item.practice : 'Отметка о выполнении удалена.', { topicId: id, stageId: item.stageId });
+  addHistory('practice', done ? `Выполнена практика «${item.title}»` : `Практика «${item.title}» возвращена в работу`, done ? item.practice : 'Отметка о выполнении удалена.', { topicId: id, stageId: item.stageId, practiceDone: done });
 }
 
 function recordStudyMinutes(id, minutes) {
@@ -553,9 +554,14 @@ function recordStudyMinutes(id, minutes) {
 function recordReview(id) {
   const item = getTopic(id);
   const data = topicState(id);
+  if (data.lastReviewedAt && dateKey(data.lastReviewedAt) === dateKey()) {
+    toast('Повторение этой темы уже записано сегодня');
+    return false;
+  }
   data.reviewCount = Number(data.reviewCount || 0) + 1;
   data.lastReviewedAt = nowISO();
   data.updatedAt = nowISO();
-  addHistory('assessment', `Повторена тема «${item.title}»`, `Количество повторений: ${data.reviewCount}.`, { topicId: id, stageId: item.stageId });
+  addHistory('assessment', `Повторена тема «${item.title}»`, `Количество повторений: ${data.reviewCount}. Следующее повторение: ${nextReviewLabel(item)}.`, { topicId: id, stageId: item.stageId });
+  return true;
 }
 
