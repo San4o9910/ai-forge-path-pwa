@@ -1,23 +1,36 @@
 {
   "id": "./",
-  "name": "AI Forge Path — Visual AI Engineer Roadmap",
+  "name": "AI Forge Path v2 — AI Engineering Skill Tracker",
   "short_name": "AI Forge Path",
-  "description": "Визуальная PWA-система обучения AI Engineer: инфографика, ежедневный план, практика, проекты и локальный прогресс.",
+  "description": "Понятный PWA-трекер навыков AI Engineer: статусы тем, история действий, оценка компетенций, практика, проекты и надёжный локальный прогресс.",
   "lang": "ru",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone"],
-  "background_color": "#050914",
-  "theme_color": "#070b16",
-  "orientation": "portrait-primary",
-  "categories": ["education", "productivity", "developer tools"],
-  "icons": [
-    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
   ],
-  "screenshots": [
-    {"src":"assets/screenshots/home-mobile.png","sizes":"390x844","type":"image/png","form_factor":"narrow","label":"Главный экран AI Forge Path"},
-    {"src":"assets/screenshots/home-desktop.png","sizes":"1440x1000","type":"image/png","form_factor":"wide","label":"Десктопная версия AI Forge Path"}
+  "background_color": "#080b12",
+  "theme_color": "#080b12",
+  "orientation": "any",
+  "categories": [
+    "education",
+    "productivity",
+    "developer tools"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }
