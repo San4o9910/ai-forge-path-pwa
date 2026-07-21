@@ -1,0 +1,66 @@
+name: Apply AI Forge Path v2.1 release
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".release-v21/READY"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ai-forge-v21-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebuild and verify release archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .release-v21/part-* | tr -d '\n\r' | base64 -d > /tmp/ai-forge-v21.zip
+          unzip -t /tmp/ai-forge-v21.zip
+
+      - name: Apply AI Forge Path v2.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -o /tmp/ai-forge-v21.zip -d .
+          rm -rf .release-v21
+
+      - name: Commit v2.1 application
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Integrate adaptive learning mechanics v2.1"
+          git push
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy AI Forge Path v2.1
+        id: deployment
+        uses: actions/deploy-pages@v4
