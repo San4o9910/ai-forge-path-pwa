@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "AI Forge Path v2 — AI Engineering Skill Tracker",
+  "name": "AI Forge Path v2.1 — AI Engineering Learning OS",
   "short_name": "AI Forge Path",
-  "description": "Понятный PWA-трекер навыков AI Engineer: статусы тем, история действий, оценка компетенций, практика, проекты и надёжный локальный прогресс.",
+  "description": "PWA для обучения AI Engineering: адаптивная практика, серия, квесты, XP, интервальные повторения, карта навыков, проекты и локальная история прогресса.",
   "lang": "ru",
   "start_url": "./",
   "scope": "./",
