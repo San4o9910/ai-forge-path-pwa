@@ -1,1 +1,1 @@
-// AI Forge Path v2.1 is split into data.js, core.js, engagement.js, render.js and dialogs.js.
+// AI Forge Path v2.2 is split into roadmap data, complete lessons, state/storage, engagement, rendering, dialogs and the lesson player.
